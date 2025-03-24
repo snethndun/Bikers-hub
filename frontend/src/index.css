@@ -1,0 +1,7 @@
+@import "tailwindcss";
+/* index.css or a global CSS file */
+body {
+  background-color: white;
+  margin: 0;
+  padding: 0;
+}
