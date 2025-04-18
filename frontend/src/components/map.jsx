@@ -43,6 +43,7 @@ const MapComponent = ({ setMapCenter }) => {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
           setCurrentLocation({ lat, lng });
+          setZoom(18);
           setMapCenter({ lat, lng });
         },
         (error) => {
@@ -68,7 +69,7 @@ const MapComponent = ({ setMapCenter }) => {
         <GoogleMap
           mapContainerStyle={mapContainerStyle}
           center={currentLocation || { lat: 28.7041, lng: 77.1025 }}
-          zoom={14}
+          zoom={zoom}
           onLoad={handleMapLoad} // ✅ Set map as loaded
         >
           {mapLoaded && // ✅ Only render markers after map is loaded

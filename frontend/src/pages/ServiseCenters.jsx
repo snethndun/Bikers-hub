@@ -1,57 +1,65 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import GarageCard from "../components/GarageCard";
-import MapComponent from "../components/map"; // Import the Map component
+import React, { useState, useEffect } from "react";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
+import MapComponent from "../components/MapComponent";
+import HomeGarageCard from "../components/HomeGarageCard";
 
-const GarageList = () => {
+const ServiceCenterPage = () => {
   const [garages, setGarages] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [mapCenter, setMapCenter] = useState({ lat: 28.7041, lng: 77.1025 }); // Default center
+  const [searchTerm, setSearchTerm] = useState("");
+  const db = getFirestore();
 
   useEffect(() => {
     const fetchGarages = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/garages");
-        setGarages(response.data);
-        setLoading(false);
+        const querySnapshot = await getDocs(collection(db, "garages"));
+        const garagesList = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setGarages(garagesList);
       } catch (error) {
         console.error("Error fetching garages:", error);
+      } finally {
         setLoading(false);
       }
     };
-
     fetchGarages();
-  }, []);
+  }, [db]);
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <span className="text-lg">Loading...</span>
-      </div>
-    );
-  }
+  const filteredGarages = garages.filter((garage) =>
+    garage.garageName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Map Component with space between map and listings */}
-      <div className="mb-12">
-        <MapComponent garages={garages} setMapCenter={setMapCenter} />
-      </div>
+    <div className="min-h-screen bg-white p-6">
+      <div className="max-w-7xl mx-auto bg-transparent p-6 rounded-lg">
+        <h2 className="text-3xl font-bold text-gray-800 mb-4">
+          Service Centers
+        </h2>
 
-      {/* Garage Listings */}
-      <div>
-        <h1 className="text-3xl font-bold mb-6 text-center">Garage Listings</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {garages.length > 0 ? (
-            garages.map((garage) => (
-              <div key={garage._id} className="flex justify-center">
-                <GarageCard garage={garage} />
-              </div>
+        {/* Search Bar */}
+        <input
+          type="text"
+          placeholder="Search garages..."
+          className="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+
+        {/* Map Section */}
+        <MapComponent garages={filteredGarages} />
+
+        {/* Garage Cards Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+          {loading ? (
+            <p className="text-center text-gray-600">Loading garages...</p>
+          ) : filteredGarages.length > 0 ? (
+            filteredGarages.map((garage) => (
+              <HomeGarageCard key={garage.id} garage={garage} />
             ))
           ) : (
-            <div className="col-span-full text-center text-xl text-gray-600">
-              No garages found.
-            </div>
+            <p className="text-center text-gray-600">No garages found.</p>
           )}
         </div>
       </div>
@@ -59,4 +67,4 @@ const GarageList = () => {
   );
 };
 
-export default GarageList;
+export default ServiceCenterPage;

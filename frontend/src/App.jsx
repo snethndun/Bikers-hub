@@ -3,13 +3,15 @@ import MainLayout from "./MainLayout";
 import HomePage from "./pages/Homepage";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
-import ServiseCenters from "./pages/ServiseCenters";
+import ServiceCenterPage from "./pages/ServiseCenters";
 import Shop from "./pages/Shop";
 import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
 import ProfilePage from "./pages/ProfilePage";
 import GarageDashboard from "./pages/garage-dashboard";
 import AddGarageForm from "./components/AddGarageForm"; // ✅ Import AddGarageForm
+import EditGarageForm from "./components/EditGarageForm"; // ✅ Import EditGarageForm
+import SingleGaragePage from "./pages/SingleGaragePage"; // ✅ Import SingleGaragePage
 
 const App = () => {
   return (
@@ -20,12 +22,15 @@ const App = () => {
             <Route path="/" element={<HomePage />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/about" element={<About />} />
-            <Route path="/servisecenters" element={<ServiseCenters />} />
+            <Route path="/serviceCenters" element={<ServiceCenterPage />} />
             <Route path="/shop" element={<Shop />} />
+            <Route path="/edit-garage/:garageId" element={<EditGarageForm />} />
+            <Route path="/garage/:id" element={<SingleGaragePage />} />
             {/* Authentication Routes */}
             <Route path="/login" element={<LoginForm />} />
             <Route path="/register" element={<RegisterForm />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/GarageDashboard" element={<GarageDashboard />} />
             {/* ✅ Add Garage Routes */}
             <Route path="/garage-dashboard" element={<GarageDashboard />} />
             <Route path="/add-garage" element={<AddGarageForm />} />{" "}

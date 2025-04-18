@@ -1,10 +1,9 @@
 import React from 'react'
-import AddGarageForm from '../components/AddGarageForm'
 
 const Shop = () => {
   return (
     <div>
-     <AddGarageForm/>
+      ffffffffffff
     </div>
   )
 }

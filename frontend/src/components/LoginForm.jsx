@@ -7,8 +7,10 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
+  setPersistence,
+  browserSessionPersistence,
 } from "firebase/auth";
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore"; // Firestore for role check
+import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -31,6 +33,10 @@ const LoginForm = () => {
 
     try {
       const { email, password } = formData;
+
+      // Set session persistence
+      await setPersistence(auth, browserSessionPersistence);
+
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
@@ -38,10 +44,9 @@ const LoginForm = () => {
       );
       const user = userCredential.user;
 
-      // Fetch user role from Firestore
       const userDoc = await getDoc(doc(db, "users", user.uid));
       const userData = userDoc.exists() ? userDoc.data() : null;
-      const userRole = userData?.role || "Biker"; // Default role if not found
+      const userRole = userData?.role || "Biker";
 
       localStorage.setItem("userId", user.uid);
       localStorage.setItem("authToken", await user.getIdToken());
@@ -50,7 +55,6 @@ const LoginForm = () => {
       setMessage("Login successful!");
       setIsSuccess(true);
 
-      // Redirect based on role
       setTimeout(() => {
         navigate(userRole === "Garage Owner" ? "/garage-dashboard" : "/");
       }, 1500);
@@ -65,18 +69,20 @@ const LoginForm = () => {
   const handleGoogleLogin = async () => {
     setLoading(true);
     const provider = new GoogleAuthProvider();
+
     try {
+      // Set session persistence
+      await setPersistence(auth, browserSessionPersistence);
+
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      // Check if user exists in Firestore
       const userDoc = await getDoc(doc(db, "users", user.uid));
       let userRole = "Biker";
 
       if (userDoc.exists()) {
         userRole = userDoc.data().role || "Biker";
       } else {
-        // If new user, ask for role and save it
         userRole =
           prompt("Select your role: 'Biker' or 'Garage Owner'") || "Biker";
         await setDoc(doc(db, "users", user.uid), {
@@ -94,7 +100,6 @@ const LoginForm = () => {
       setMessage("Google login successful!");
       setIsSuccess(true);
 
-      // Redirect based on role
       setTimeout(() => {
         navigate(userRole === "Garage Owner" ? "/garage-dashboard" : "/");
       }, 1500);
@@ -109,7 +114,6 @@ const LoginForm = () => {
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg w-96 shadow-lg relative">
-        {/* Close Button */}
         <button
           onClick={() => navigate("/")}
           className="absolute top-3 right-3 text-gray-600 hover:text-gray-900 text-2xl"
