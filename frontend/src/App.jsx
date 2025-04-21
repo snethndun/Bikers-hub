@@ -12,6 +12,8 @@ import GarageDashboard from "./pages/garage-dashboard";
 import AddGarageForm from "./components/AddGarageForm"; // ✅ Import AddGarageForm
 import EditGarageForm from "./components/EditGarageForm"; // ✅ Import EditGarageForm
 import SingleGaragePage from "./pages/SingleGaragePage"; // ✅ Import SingleGaragePage
+import FullMapPage from "./pages/FulMapPage"; // ✅ Import FullMapPage
+import AdminDashboard from "./pages/AdminDashboard"; // ✅ Import AdminDashboard
 
 const App = () => {
   return (
@@ -26,11 +28,13 @@ const App = () => {
             <Route path="/shop" element={<Shop />} />
             <Route path="/edit-garage/:garageId" element={<EditGarageForm />} />
             <Route path="/garage/:id" element={<SingleGaragePage />} />
+            <Route path="/map" element={<FullMapPage />} />
             {/* Authentication Routes */}
             <Route path="/login" element={<LoginForm />} />
             <Route path="/register" element={<RegisterForm />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/GarageDashboard" element={<GarageDashboard />} />
+            <Route path="/admin-dashboard" element={<AdminDashboard />} />
             {/* ✅ Add Garage Routes */}
             <Route path="/garage-dashboard" element={<GarageDashboard />} />
             <Route path="/add-garage" element={<AddGarageForm />} />{" "}

@@ -1,20 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // For navigation
+import { useNavigate } from "react-router-dom";
 import Hero from "../components/Hero";
 import CategorySection from "./Categories";
 import GarageList from "../components/garagelist";
 import { useInView } from "react-intersection-observer";
 import { motion } from "framer-motion";
-import seriveImg1 from "../assets/servise1.jpg";
-import seriveImg2 from "../assets/servise2.jpg";
-import seriveImg3 from "../assets/servise3.png";
-import imgtext from "../assets/texture.svg";
+import {
+  FaTools,
+  FaMapMarkedAlt,
+  FaStar,
+  FaSearchLocation,
+  FaMotorcycle,
+  FaHandshake,
+} from "react-icons/fa";
+import BikeModel from "../components/BikeModel";
+
 function HomePage() {
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
   const { ref: heroRef, inView: heroInView } = useInView({
     triggerOnce: true,
     threshold: 0.5,
   });
+
   const [garages, setGarages] = useState([]);
 
   useEffect(() => {
@@ -57,157 +64,183 @@ function HomePage() {
       >
         <Hero />
       </motion.div>
-
       {/* Category Section */}
-      <motion.div
-        className="max-w-screen-xl mx-auto py-10 px-4"
+      <motion.section
+        className="max-w-screen-xl mx-auto py-16 px-4"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
         viewport={{ once: true }}
       >
-        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
+        <h2 className="text-3xl font-bold text-center mb-10 text-gray-800">
           Browse Categories
         </h2>
         <CategorySection />
-      </motion.div>
-
-      {/* Garage List Section */}
-      <motion.div
-        className="max-w-screen-xl mx-auto py-10 px-4"
+      </motion.section>
+      {/*promo*/}
+      <motion.section
+        className="relative py-20 px-4 bg-gray-100 min-h-[500px] flex items-center"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
         viewport={{ once: true }}
       >
-        <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
+        {/* Content - Positioned on the right side */}
+        <div className="relative z-10 max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center w-full">
+          {/* Text Content - Right side */}
+          <div className="text-center md:text-left space-y-6">
+            <h3 className="text-4xl md:text-5xl font-extrabold text-black leading-tight">
+              Experience the Ultimate Ride
+            </h3>
+            <p className="text-lg text-black/90">
+              Discover top-notch bike repairs, maintenance, and accessories with
+              the best in the industry. Let us help you keep your bike in top
+              shape for every adventure.
+            </p>
+            <motion.button
+              className="bg-white text-black py-3 px-8 rounded-full font-semibold hover:bg-gray-200 transition duration-300 shadow-lg"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => alert("Shop Now!")}
+            >
+              Shop Now
+            </motion.button>
+          </div>
+
+          {/* Canvas - 3D Model (bike) positioned on the left side */}
+          <div className="relative h-[400px] w-full md:w-[700px] mx-auto">
+            <BikeModel />
+          </div>
+        </div>
+      </motion.section>
+      ;{/* Why Choose Us */}
+      <motion.section
+        className="max-w-screen-xl mx-auto py-16 px-4"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: true }}
+      >
+        <h2 className="text-3xl font-bold text-center mb-12 text-gray-800">
+          Why Choose Biker's Hub?
+        </h2>
+        <div className="grid md:grid-cols-3 gap-10 text-center">
+          {[
+            {
+              icon: <FaTools className="text-yellow-500 text-5xl mb-4" />,
+              title: "Top Quality Repairs",
+              text: "Experienced mechanics providing reliable servicing for all bike models.",
+            },
+            {
+              icon: (
+                <FaMapMarkedAlt className="text-yellow-500 text-5xl mb-4" />
+              ),
+              title: "Find Garages Nearby",
+              text: "Easily locate trusted service centers near your location.",
+            },
+            {
+              icon: <FaStar className="text-yellow-500 text-5xl mb-4" />,
+              title: "Rated by Riders",
+              text: "Thousands of bikers trust and rate our listed garages.",
+            },
+          ].map((item, i) => (
+            <div key={i} className="flex flex-col items-center">
+              {item.icon}
+              <h4 className="text-xl font-semibold mb-2">{item.title}</h4>
+              <p className="text-gray-600">{item.text}</p>
+            </div>
+          ))}
+        </div>
+      </motion.section>
+      {/* Available Garages */}
+      <motion.section
+        className="max-w-screen-xl mx-auto py-16 px-4"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: true }}
+      >
+        <h2 className="text-3xl font-bold text-center mb-10 text-gray-800">
           Available Garages
         </h2>
         <GarageList garages={garages} />
-      </motion.div>
-
-      {/* Discover More Section - Full Width */}
-      <div className="py-16 bg-white flex flex-col items-center">
-        <h2 className="text-4xl font-bold text-gray-800 mb-10">
-          Discover More
-        </h2>
-        <motion.div
-          className="flex justify-center gap-6 w-full px-10"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={{
-            hidden: { opacity: 0, y: 30 },
-            visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.2 } },
-          }}
-        >
-          {/* Card 1 */}
-          <motion.div
-            className="w-1/3 h-[350px] rounded-lg shadow-lg relative"
-            style={{
-              backgroundImage: `url(${seriveImg1})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-            variants={{
-              hidden: { opacity: 0, y: 30 },
-              visible: { opacity: 1, y: 0 },
-            }}
-          >
-            {/* Dark Overlay for Better Readability */}
-            <div className="absolute inset-0 bg-black opacity-60 rounded-lg"></div>
-
-            <div className="absolute bottom-5 left-5 text-white z-10">
-              <h3 className="text-3xl font-bold">
-                Premium Bike Repairs & Servicing
-              </h3>
-              <p className="text-lg">
-                Top-notch servicing from expert mechanics who understand your
-                ride.
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Card 2 */}
-          <motion.div
-            className="w-1/3 h-[350px] rounded-lg shadow-lg relative"
-            style={{
-              backgroundImage: `url(${seriveImg2})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-            variants={{
-              hidden: { opacity: 0, y: 30 },
-              visible: { opacity: 1, y: 0 },
-            }}
-          >
-            {/* Dark Overlay for Better Readability */}
-            <div className="absolute inset-0 bg-black opacity-60 rounded-lg"></div>
-
-            <div className="absolute bottom-5 left-5 text-white z-10">
-              <h3 className="text-3xl font-bold">
-                Trusted Experts for Every Ride
-              </h3>
-              <p className="text-lg">
-                From quick fixes to full service, our professionals ensure peak
-                performance.
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Card 3 */}
-          <motion.div
-            className="w-1/3 h-[350px] rounded-lg shadow-lg relative"
-            style={{
-              backgroundImage: `url(${seriveImg3})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-            variants={{
-              hidden: { opacity: 0, y: 30 },
-              visible: { opacity: 1, y: 0 },
-            }}
-          >
-            {/* Dark Overlay for Better Readability */}
-            <div className="absolute inset-0 bg-black opacity-60 rounded-lg"></div>
-
-            <div className="absolute bottom-5 left-5 text-white z-10">
-              <h3 className="text-3xl font-bold">Fair Pricing, No Surprises</h3>
-              <p className="text-lg">
-                Transparent pricing with no hidden costs—get the best deals for
-                your bike.
-              </p>
-            </div>
-          </motion.div>
-        </motion.div>
-      </div>
-      <motion.div
-        className="py-16 bg-yellow-400 text-white text-center relative bg-opacity-25"
+      </motion.section>
+      {/* How It Works */}
+      <motion.section
+        className="max-w-screen-xl mx-auto py-16 px-4 bg-gray-50 mb-16"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
         viewport={{ once: true }}
-        style={{
-          backgroundImage: `url(${imgtext})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
       >
-        <h3 className="text-4xl font-bold mb-4">Need Help?</h3>
-        <p className="mb-6 text-lg">
-          We are here to assist you. Reach out to us for support.
-        </p>
+        <h2 className="text-3xl font-bold text-center mb-12 text-gray-800">
+          How It Works
+        </h2>
+        <div className="grid md:grid-cols-3 gap-10 text-center">
+          {[
+            {
+              icon: (
+                <FaSearchLocation className="text-blue-500 text-5xl mb-4" />
+              ),
+              title: "Search",
+              text: "Find garages and services in your preferred area.",
+            },
+            {
+              icon: <FaMotorcycle className="text-blue-500 text-5xl mb-4" />,
+              title: "Book",
+              text: "Schedule a service or visit easily through our platform.",
+            },
+            {
+              icon: <FaHandshake className="text-blue-500 text-5xl mb-4" />,
+              title: "Get Serviced",
+              text: "Let trusted mechanics take care of your bike.",
+            },
+          ].map((item, i) => (
+            <div key={i} className="flex flex-col items-center">
+              {item.icon}
+              <h4 className="text-xl font-semibold mb-2">{item.title}</h4>
+              <p className="text-gray-600">{item.text}</p>
+            </div>
+          ))}
+        </div>
+      </motion.section>
+      <motion.section
+        className="relative py-16 px-4 text-black bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: true }}
+      >
+        <div className="flex items-center justify-between max-w-7xl mx-auto bg-white/30 backdrop-blur-sm rounded-2xl p-10 border border-white/20 shadow-lg">
+          {/* Left Side - Text and Button */}
+          <div className="w-1/2 text-left">
+            <h3 className="text-4xl font-extrabold mb-4 tracking-tight">
+              Need Help?
+            </h3>
+            <p className="text-lg mb-8 text-black/90">
+              Our team is here for you. Reach out anytime for personalized
+              support or assistance.
+            </p>
+            <motion.button
+              className="bg-white text-yellow-600 py-3 px-8 rounded-full font-semibold hover:bg-yellow-100 transition duration-300 shadow-md"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate("/Contact")}
+            >
+              Contact Us
+            </motion.button>
+          </div>
+        </div>
 
-        <motion.button
-          className="bg-yellow-500 text-black py-3 px-6 rounded-full hover:bg-gray-100 transition duration-300 text-lg font-semibold"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => navigate("/Contact")} // Link to Contact Us page
-        >
-          Contact Us
-        </motion.button>
-      </motion.div>
+        {/* Right Side - Image (outside the text content div) */}
+        <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-1/3">
+          <img
+            src="/bike2.png" // Ensure the image is in your public folder
+            alt="Bike"
+            className="w-full h-auto rounded-lg "
+          />
+        </div>
+      </motion.section>
     </div>
   );
 }

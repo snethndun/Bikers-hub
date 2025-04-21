@@ -5,7 +5,7 @@ import { BsArrowRight } from "react-icons/bs"; // Import the React icon
 const HeroSection = () => {
   return (
     <section
-      className="relative h-screen flex items-center justify-start text-white bg-cover bg-center"
+      className="relative h-[50vh] md:h-[70vh] lg:h-[80vh] flex items-center justify-start text-white bg-cover bg-center"
       style={{
         backgroundImage: `url(${heroImage})`,
       }}

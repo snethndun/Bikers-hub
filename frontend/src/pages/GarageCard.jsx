@@ -41,59 +41,59 @@ const GarageCard = ({ garage }) => {
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+    <div className="bg-white p-4 mb-4 shadow-sm border border-gray-200 rounded-md">
       {/* Check if the image URL exists */}
-      {garage.imageUrl ? (
-        <img
-          src={garage.imageUrl}
-          alt={garage.garageName || "Garage Image"}
-          className="w-full h-40 object-cover rounded-lg mb-4"
-        />
-      ) : (
-        <img
-          src="https://via.placeholder.com/150"
-          alt="Placeholder"
-          className="w-full h-40 object-cover rounded-lg mb-4"
-        />
-      )}
+      <div className="mb-4">
+        {garage.imageUrl ? (
+          <img
+            src={garage.imageUrl}
+            alt={garage.garageName || "Garage Image"}
+            className="w-full h-40 object-cover rounded-md"
+          />
+        ) : (
+          <img
+            src="https://via.placeholder.com/150"
+            alt="Placeholder"
+            className="w-full h-40 object-cover rounded-md"
+          />
+        )}
+      </div>
 
-      <h3 className="text-xl font-bold text-gray-800">{garage.garageName}</h3>
-      <p className="text-gray-600">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">{garage.garageName}</h3>
+        <div className="space-x-2">
+          <button
+            onClick={handleEdit}
+            className="text-blue-500 hover:text-blue-600"
+          >
+            Edit
+          </button>
+          <button
+            onClick={openDeleteModal}
+            className="text-red-500 hover:text-red-600"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+
+      <p className="text-sm text-gray-600">
         Location:{" "}
-        {garage.location && typeof garage.location === "object"
+        {garage.location
           ? `${garage.location.lat}, ${garage.location.lng}`
           : "Location not available"}
       </p>
-      <p className="text-green-600 font-semibold">
-        Contact number: {garage.contactNumber}
+      <p className="text-sm text-green-600 font-semibold">
+        Contact: {garage.contactNumber}
       </p>
-      <p className="text-gray-700 mt-2">{garage.description}</p>
-
-      {/* Buttons Section */}
-      <div className="mt-4 flex justify-between gap-4">
-        {/* Edit Button */}
-        <button
-          onClick={handleEdit}
-          className="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300 text-center"
-        >
-          Edit
-        </button>
-
-        {/* Delete Button */}
-        <button
-          onClick={openDeleteModal}
-          className="flex-1 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition duration-300 text-center"
-        >
-          Delete
-        </button>
-      </div>
+      <p className="text-sm text-gray-700">{garage.description}</p>
 
       {/* Success/Error Alert */}
       {message && (
         <div
           className={`${
             messageType === "success" ? "bg-green-500" : "bg-red-500"
-          } text-white p-4 rounded-md mt-4 text-center`}
+          } text-white p-2 rounded-md mt-2 text-center`}
         >
           {message}
         </div>

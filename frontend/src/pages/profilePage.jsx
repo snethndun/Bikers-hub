@@ -47,27 +47,43 @@ const Profile = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg w-96 shadow-lg relative">
-        <h2 className="text-3xl font-semibold text-center mb-6 text-gray-800">
+    <div className="flex justify-center items-center h-screen bg-gray-50">
+      <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md">
+        <h2 className="text-3xl font-semibold text-center text-gray-800 mb-8">
           Profile
         </h2>
 
         {user ? (
           <div className="text-center">
-            <p className="mb-4">
-              Welcome,{" "}
-              {userData ? `${userData.firstName} ${userData.lastName}` : "User"}
-              !
-            </p>
-            <p className="mb-4">Email: {user.email}</p>
-            <p className="mb-4">User ID: {user.uid}</p>
-            <button
-              onClick={handleLogout}
-              className="w-full bg-red-500 text-white py-3 rounded hover:bg-red-600"
-            >
-              Logout
-            </button>
+            <div className="mb-6">
+              <h3 className="text-xl font-medium text-gray-700">
+                Welcome,{" "}
+                {userData
+                  ? `${userData.firstName} ${userData.lastName}`
+                  : "User"}
+                !
+              </h3>
+            </div>
+
+            <div className="space-y-3 text-sm text-gray-600">
+              <p>
+                <span className="font-semibold text-gray-800">Email:</span>{" "}
+                {user.email}
+              </p>
+              <p>
+                <span className="font-semibold text-gray-800">User ID:</span>{" "}
+                {user.uid}
+              </p>
+            </div>
+
+            <div className="mt-6">
+              <button
+                onClick={handleLogout}
+                className="w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition-colors duration-300"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         ) : (
           <p className="text-center text-red-500">Loading profile...</p>

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import MapComponent from "../components/MapComponent";
 import HomeGarageCard from "../components/HomeGarageCard";
+import { Link } from "react-router-dom";
+
 
 const ServiceCenterPage = () => {
   const [garages, setGarages] = useState([]);
@@ -37,6 +39,13 @@ const ServiceCenterPage = () => {
         <h2 className="text-3xl font-bold text-gray-800 mb-4">
           Service Centers
         </h2>
+        <div className="flex justify-end mb-4">
+          <Link to="/map">
+            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+              view full map
+            </button>
+          </Link>
+        </div>
 
         {/* Search Bar */}
         <input

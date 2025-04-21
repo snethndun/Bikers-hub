@@ -34,7 +34,6 @@ const LoginForm = () => {
     try {
       const { email, password } = formData;
 
-      // Set session persistence
       await setPersistence(auth, browserSessionPersistence);
 
       const userCredential = await signInWithEmailAndPassword(
@@ -55,8 +54,13 @@ const LoginForm = () => {
       setMessage("Login successful!");
       setIsSuccess(true);
 
+      const role = userRole.toLowerCase();
+      let redirectPath = "/";
+      if (role === "garage owner") redirectPath = "/garage-dashboard";
+      else if (role === "admin") redirectPath = "/admin-dashboard";
+
       setTimeout(() => {
-        navigate(userRole === "Garage Owner" ? "/garage-dashboard" : "/");
+        navigate(redirectPath);
       }, 1500);
     } catch (error) {
       setMessage(error.message || "Login failed!");
@@ -71,7 +75,6 @@ const LoginForm = () => {
     const provider = new GoogleAuthProvider();
 
     try {
-      // Set session persistence
       await setPersistence(auth, browserSessionPersistence);
 
       const result = await signInWithPopup(auth, provider);
@@ -83,11 +86,15 @@ const LoginForm = () => {
       if (userDoc.exists()) {
         userRole = userDoc.data().role || "Biker";
       } else {
-        userRole =
-          prompt("Select your role: 'Biker' or 'Garage Owner'") || "Biker";
+        const inputRole = prompt(
+          "Select your role: 'Biker', 'Garage Owner', or 'Admin'"
+        );
+        const allowedRoles = ["Biker", "Garage Owner", "Admin"];
+        userRole = allowedRoles.includes(inputRole) ? inputRole : "Biker";
+
         await setDoc(doc(db, "users", user.uid), {
-          firstName: user.displayName.split(" ")[0],
-          lastName: user.displayName.split(" ")[1] || "",
+          firstName: user.displayName?.split(" ")[0] || "",
+          lastName: user.displayName?.split(" ")[1] || "",
           email: user.email,
           role: userRole,
         });
@@ -100,8 +107,13 @@ const LoginForm = () => {
       setMessage("Google login successful!");
       setIsSuccess(true);
 
+      const role = userRole.toLowerCase();
+      let redirectPath = "/";
+      if (role === "garage owner") redirectPath = "/garage-dashboard";
+      else if (role === "admin") redirectPath = "/admin-dashboard";
+
       setTimeout(() => {
-        navigate(userRole === "Garage Owner" ? "/garage-dashboard" : "/");
+        navigate(redirectPath);
       }, 1500);
     } catch (error) {
       setMessage(error.message || "Google login failed!");

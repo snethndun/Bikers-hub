@@ -69,7 +69,6 @@ const Navbar = () => {
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Service Centers", path: "/ServiceCenters" },
-    { name: "Shop", path: "/shop" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
   ];
@@ -134,19 +133,29 @@ const Navbar = () => {
                           to="/GarageDashboard"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         >
-                          Dashboard
+                          Garage Dashboard
+                        </Link>
+                      </li>
+                    )}
+
+                    {userRole === "admin" && (
+                      <li>
+                        <Link
+                          to="/admin-dashboard"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Admin Dashboard
                         </Link>
                       </li>
                     )}
 
                     <li>
-                      <Link
-                        to="#"
+                      <button
                         onClick={handleSignOut}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
                         Sign out
-                      </Link>
+                      </button>
                     </li>
                   </ul>
                 </div>

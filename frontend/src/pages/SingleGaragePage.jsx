@@ -8,7 +8,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { FaMapMarkerAlt, FaPhone, FaStar } from "react-icons/fa";
-import ReviewModal from "../components/reviewmodel"; // Import ReviewModal
+import ReviewModal from "../components/reviewmodel";
 
 const SingleGaragePage = () => {
   const { id } = useParams();
@@ -43,121 +43,129 @@ const SingleGaragePage = () => {
 
   const services = Array.isArray(garage.services) ? garage.services : [];
 
+  const handleMapClick = () => {
+    const lat = parseFloat(garage?.location?.lat);
+    const lng = parseFloat(garage?.location?.lng);
+    if (!isNaN(lat) && !isNaN(lng)) {
+      window.open(
+        `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`,
+        "_blank"
+      );
+    } else {
+      alert("Invalid location data. Please try again later.");
+    }
+  };
+
   return (
-    <div className="max-w-6xl mx-auto p-6 mt-12 bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-xl">
-      <div className="flex flex-col md:flex-row gap-8 mb-8">
-        <div className="flex-1">
-          <img
-            src={garage.imageUrl || "https://via.placeholder.com/600"}
-            alt={garage.garageName}
-            className="w-full h-80 object-cover rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
-          />
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-lg p-8">
+        <div className="flex flex-col md:flex-row gap-10">
+          {/* Left: Garage Image */}
+          <div className="flex-1">
+            <img
+              src={garage.imageUrl || "https://via.placeholder.com/600"}
+              alt={garage.garageName}
+              className="w-full h-80 object-cover rounded-xl shadow-md hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+
+          {/* Right: Garage Details */}
+          <div className="flex-1 flex flex-col justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-800 mb-2">
+                {garage.garageName}
+              </h1>
+              <p className="text-gray-600 mb-4">{garage.description}</p>
+
+              <div className="flex items-center text-yellow-500 mb-3">
+                {[...Array(5)].map((_, index) => (
+                  <FaStar
+                    key={index}
+                    className={`text-lg ${
+                      index < garage.rating ? "text-yellow-500" : "text-gray-300"
+                    }`}
+                  />
+                ))}
+                <span className="ml-2 text-gray-700 text-sm">
+                  ({garage.rating || 0}/5) - {reviews.length} reviews
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2 text-gray-700 mb-3">
+                <FaMapMarkerAlt className="text-blue-600" />
+                <span>{garage.address || "No address provided"}</span>
+              </div>
+
+              <div className="flex justify-between text-sm font-medium text-gray-800 mb-6">
+                <p className="text-green-600">Open: {garage.openTime} AM</p>
+                <p className="text-red-600">Close: {garage.closeTime} PM</p>
+              </div>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex flex-wrap gap-4 mt-4">
+              <a
+                href={`tel:${garage.contactNumber}`}
+                className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl shadow hover:bg-blue-700 transition"
+              >
+                <FaPhone /> Call
+              </a>
+
+              <button
+                onClick={handleMapClick}
+                className="flex items-center gap-2 bg-green-600 text-white px-5 py-2.5 rounded-xl shadow hover:bg-green-700 transition"
+              >
+                <FaMapMarkerAlt /> Directions
+              </button>
+
+              <button
+                onClick={() => setShowReviewModal(true)}
+                className="flex items-center gap-2 bg-yellow-500 text-white px-5 py-2.5 rounded-xl shadow hover:bg-yellow-600 transition"
+              >
+                <FaStar /> Write Review
+              </button>
+            </div>
+
+            {showReviewModal && (
+              <ReviewModal
+                garageId={id}
+                onClose={() => setShowReviewModal(false)}
+              />
+            )}
+          </div>
         </div>
 
-        <div className="flex-1">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            {garage.garageName}
-          </h1>
-          <p className="text-gray-700 mb-6">{garage.description}</p>
-
-          <div className="flex items-center text-yellow-500 mb-4">
-            {[...Array(5)].map((_, index) => (
-              <FaStar
-                key={index}
-                className={`text-lg ${
-                  index < garage.rating ? "text-yellow-500" : "text-gray-300"
-                }`}
-              />
-            ))}
-            <span className="ml-2 text-gray-600 text-base">
-              ({garage.rating || 0}/5) - {reviews.length} reviews
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2 text-gray-700 mb-6">
-            <FaMapMarkerAlt className="text-blue-500 text-lg" />
-            <span className="text-lg">
-              {garage.address || "No address provided"}
-            </span>
-          </div>
-
-          <div className="flex justify-between text-sm font-medium text-gray-800 mb-6">
-            <p className="text-green-600">Open: {garage.openTime} AM</p>
-            <p className="text-red-600">Close: {garage.closeTime} PM</p>
-          </div>
-
-          {/* ACTION BUTTONS */}
-          <div className="flex flex-wrap gap-4 mb-6">
-            <a
-              href={`tel:${garage.contactNumber}`}
-              className="flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition-all duration-200"
-            >
-              <FaPhone />
-              Call Now
-            </a>
-
-            <button
-              onClick={() =>
-                window.open(
-                  `https://www.google.com/maps/search/?api=1&query=${garage.location.lat},${garage.location.lng}`,
-                  "_blank"
-                )
-              }
-              className="flex items-center justify-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-700 transition-all duration-200"
-            >
-              <FaMapMarkerAlt />
-              Get Directions
-            </button>
-
-            <button
-              onClick={() => setShowReviewModal(true)}
-              className="flex items-center justify-center gap-2 bg-yellow-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-yellow-600 transition-all duration-200"
-            >
-              <FaStar />
-              Write a Review
-            </button>
-          </div>
-
-          {/* Review Modal */}
-          {showReviewModal && (
-            <ReviewModal
-              garageId={id}
-              onClose={() => setShowReviewModal(false)}
-            />
+        {/* Reviews Section */}
+        <div className="mt-12">
+          <h2 className="text-2xl font-bold mb-4 text-gray-800">User Reviews</h2>
+          {reviews.length === 0 ? (
+            <p className="text-gray-500">No reviews yet.</p>
+          ) : (
+            <div className="space-y-4">
+              {reviews.map((review, idx) => (
+                <div
+                  key={idx}
+                  className="border border-gray-200 p-4 rounded-xl bg-white shadow-sm hover:shadow-md transition"
+                >
+                  <div className="flex items-center text-yellow-500 mb-1">
+                    {[...Array(5)].map((_, i) => (
+                      <FaStar
+                        key={i}
+                        className={`${
+                          i < review.rating ? "text-yellow-500" : "text-gray-300"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <p className="text-gray-700">{review.reviewText}</p>
+                  <p className="text-sm text-gray-400 mt-1">
+                    By: {review.email || "Anonymous"}
+                  </p>
+                </div>
+              ))}
+            </div>
           )}
         </div>
-      </div>
-
-      {/* REVIEWS SECTION */}
-      <div className="mt-12">
-        <h2 className="text-2xl font-bold mb-4 text-gray-800">User Reviews</h2>
-        {reviews.length === 0 ? (
-          <p className="text-gray-600">No reviews yet.</p>
-        ) : (
-          <div className="space-y-4">
-            {reviews.map((review, idx) => (
-              <div
-                key={idx}
-                className="border border-gray-200 p-4 rounded-lg shadow-sm bg-white hover:shadow-md transition-all duration-200"
-              >
-                <div className="flex items-center text-yellow-500 mb-2">
-                  {[...Array(5)].map((_, i) => (
-                    <FaStar
-                      key={i}
-                      className={`${
-                        i < review.rating ? "text-yellow-500" : "text-gray-300"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <p className="text-gray-800 mb-2">{review.reviewText}</p>
-                <p className="text-sm text-gray-500">
-                  By: {review.email || "Anonymous"}
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

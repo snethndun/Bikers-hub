@@ -1,9 +1,10 @@
 import React from "react";
 import { FaMapMarkerAlt, FaPhone } from "react-icons/fa";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Link } from "react-router-dom";
 
 const HomeGarageCard = ({ garage }) => {
-  const handleDirectionsClick = () => {
+  const handleDirectionsClick = (e) => {
+    e.preventDefault(); // Prevent Link navigation
     if (garage?.location?.lat && garage?.location?.lng) {
       window.open(
         `https://www.google.com/maps/search/?api=1&query=${garage.location.lat},${garage.location.lng}`,
@@ -14,49 +15,50 @@ const HomeGarageCard = ({ garage }) => {
 
   return (
     <Link
-      to={`/garage/${garage.id}`} // Use Link to navigate to SingleGaragePage
-      className="bg-white p-5 rounded-2xl shadow-md border border-gray-300 transition-transform transform hover:scale-105 duration-300"
+      to={`/garage/${garage.id}`}
+      className="bg-transparent rounded-2xl   p-4 w-full max-w-sm transition-transform duration-300 hover:scale-[1.02]"
     >
       {/* Garage Image */}
-      <img
-        src={garage.imageUrl || "https://via.placeholder.com/300"}
-        alt="Garage"
-        className="w-full h-48 object-cover rounded-xl mb-4"
-      />
-
-      {/* Garage Details */}
-      <h3 className="text-xl font-bold text-gray-900 mb-2">
-        {garage.garageName}
-      </h3>
-      <p className="text-gray-700 mb-3 text-sm">{garage.description}</p>
-
-      {/* Location */}
-      <div className="flex items-center gap-2 text-gray-700 mb-3">
-        <FaMapMarkerAlt
-          className="text-blue-500 text-lg cursor-pointer"
-          onClick={handleDirectionsClick} // Google Maps navigation
+      <div className="w-full h-44 rounded-xl overflow-hidden mb-4">
+        <img
+          src={garage.imageUrl || "https://via.placeholder.com/300"}
+          alt="Garage"
+          className="w-full h-full object-cover"
         />
-        <span
-          className="cursor-pointer hover:underline"
-          onClick={handleDirectionsClick} // Google Maps navigation
+      </div>
+
+      {/* Garage Info */}
+      <div className="space-y-2">
+        <h3 className="text-lg font-semibold text-gray-900">
+          {garage.garageName}
+        </h3>
+        <p className="text-sm text-gray-600 line-clamp-2">
+          {garage.description}
+        </p>
+
+        {/* Location Link */}
+        <div
+          className="flex items-center gap-2 text-sm text-blue-600 cursor-pointer hover:underline"
+          onClick={handleDirectionsClick}
         >
+          <FaMapMarkerAlt className="text-base" />
           Get Directions
-        </span>
-      </div>
+        </div>
 
-      {/* Open & Close Time */}
-      <div className="flex justify-between text-sm font-medium text-gray-800 mb-3">
-        <p className="text-green-600">Open: {garage.openTime} AM</p>
-        <p className="text-red-600">Close: {garage.closeTime} PM</p>
-      </div>
+        {/* Timings */}
+        <div className="flex justify-between text-xs text-gray-500 font-medium">
+          <span className="text-green-600">Open: {garage.openTime}</span>
+          <span className="text-red-500">Close: {garage.closeTime}</span>
+        </div>
 
-      {/* Contact Button */}
-      <a
-        href={`tel:${garage.contactNumber}`}
-        className="flex items-center justify-center bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition w-full text-center font-medium"
-      >
-        <FaPhone className="mr-2" /> {garage.contactNumber}
-      </a>
+        {/* Contact Button */}
+        <a
+          href={`tel:${garage.contactNumber}`}
+          className="mt-3 inline-flex items-center justify-center w-full px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-xl hover:bg-blue-600 transition"
+        >
+          <FaPhone className="mr-2" /> {garage.contactNumber}
+        </a>
+      </div>
     </Link>
   );
 };

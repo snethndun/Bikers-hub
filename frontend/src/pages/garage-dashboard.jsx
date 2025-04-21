@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
@@ -8,91 +8,146 @@ import {
   query,
   where,
   getDocs,
+  doc,
 } from "firebase/firestore";
 import GarageCard from "./GarageCard";
-import { FaPlus, FaSignOutAlt } from "react-icons/fa";
+import { FaSignOutAlt } from "react-icons/fa";
 
 const GarageDashboard = () => {
   const [garages, setGarages] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState("garages");
   const navigate = useNavigate();
   const db = getFirestore();
 
   useEffect(() => {
-    const fetchGarages = async () => {
+    const fetchData = async () => {
       const user = auth.currentUser;
       if (!user) {
         navigate("/login");
         return;
       }
+
       try {
         const q = query(
           collection(db, "garages"),
           where("ownerId", "==", user.uid)
         );
-        const querySnapshot = await getDocs(q);
-        const garagesList = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const garageSnap = await getDocs(q);
+        const garagesList = [];
+        const reviewsList = [];
+
+        for (const garageDoc of garageSnap.docs) {
+          const garageData = { id: garageDoc.id, ...garageDoc.data() };
+          garagesList.push(garageData);
+
+          const reviewsRef = collection(db, "garages", garageDoc.id, "reviews");
+          const reviewsSnap = await getDocs(reviewsRef);
+          reviewsSnap.docs.forEach((r) =>
+            reviewsList.push({ garageName: garageData.garageName, ...r.data() })
+          );
+        }
+
         setGarages(garagesList);
+        setReviews(reviewsList);
       } catch (error) {
-        console.error("Error fetching garages:", error);
+        console.error("Error loading data:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchGarages();
-  }, [db, navigate]);
+
+    fetchData();
+  }, [navigate]);
 
   const handleLogout = async () => {
     try {
       await signOut(auth);
       navigate("/login");
     } catch (error) {
-      console.error("Error logging out:", error);
+      console.error("Logout error:", error);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8 flex flex-col items-center">
-      <div className="max-w-6xl w-full bg-white p-8 rounded-xl shadow-lg">
-        <h2 className="text-3xl font-semibold text-gray-900 mb-6 text-center animate-fadeIn">
-          Garage Dashboard
-        </h2>
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      <aside className="w-1/4 bg-white p-6 shadow-md">
+        <h1 className="text-2xl font-bold mb-6">Garage Dashboard</h1>
+        <button
+          onClick={() => setActiveSection("garages")}
+          className={`block w-full text-left px-4 py-2 rounded-md mb-3 ${
+            activeSection === "garages" ? "bg-gray-200" : "hover:bg-gray-100"
+          }`}
+        >
+          Garages
+        </button>
+        <button
+          onClick={() => setActiveSection("reviews")}
+          className={`block w-full text-left px-4 py-2 rounded-md mb-6 ${
+            activeSection === "reviews" ? "bg-gray-200" : "hover:bg-gray-100"
+          }`}
+        >
+          Reviews
+        </button>
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition duration-300 ease-in-out transform hover:scale-105"
+        >
+          <FaSignOutAlt /> Logout
+        </button>
+      </aside>
 
-        <div className="flex justify-between items-center mb-6">
-          <button
-            onClick={() => navigate("/add-garage")}
-            className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition duration-300 ease-in-out transform hover:scale-105"
-          >
-            <FaPlus /> Add New Garage
-          </button>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition duration-300 ease-in-out transform hover:scale-105"
-          >
-            <FaSignOutAlt /> Logout
-          </button>
-        </div>
-
+      {/* Content */}
+      <main className="w-3/4 p-8 overflow-y-auto">
         {loading ? (
-          <div className="flex justify-center items-center space-x-2">
-            <div className="w-8 h-8 border-t-4 border-blue-500 border-solid rounded-full animate-spin"></div>
-            <span className="text-gray-600">Loading garages...</span>
+          <div className="flex justify-center items-center h-full">
+            <div className="w-10 h-10 border-t-4 border-blue-500 border-solid rounded-full animate-spin"></div>
           </div>
-        ) : garages.length === 0 ? (
-          <p className="text-center text-gray-600 animate-fadeIn">
-            No garages found. Add one!
-          </p>
+        ) : activeSection === "garages" ? (
+          garages.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {garages.map((garage) => (
+                <GarageCard key={garage.id} garage={garage} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-600">No garages found.</p>
+          )
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fadeIn">
-            {garages.map((garage) => (
-              <GarageCard key={garage.id} garage={garage} />
-            ))}
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              All Reviews
+            </h2>
+            {reviews.length > 0 ? (
+              <div className="space-y-4">
+                {reviews.map((review, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-white p-4 rounded-xl shadow border border-gray-200"
+                  >
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="text-lg font-semibold text-gray-700">
+                        {review.garageName}
+                      </h3>
+                      <span className="text-sm text-yellow-500">
+                        ⭐ {review.rating}/5
+                      </span>
+                    </div>
+                    <p className="text-gray-700">{review.reviewText}</p>
+                    <p className="text-sm text-gray-400 mt-1">
+                      By: {review.email || "Anonymous"}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-600">No reviews available.</p>
+            )}
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 };
