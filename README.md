@@ -21,7 +21,7 @@
 
 1. Clone the repo:
    ```bash
-   git clone https://github.com/yourusername/bikers-hub.git
+   git clone https://github.com/snethndun/Bikers-hub.git
    cd bikers-hub
    ```
 
