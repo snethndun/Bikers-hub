@@ -1,14 +1,22 @@
 import { defineConfig } from "cypress";
+import viteConfig from "./vite.config.js"; // <-- Add this line
 
 export default defineConfig({
   e2e: {
-    baseUrl: "http://localhost:5173", // Base URL for your app
-    viewportWidth: 1280, // Set default viewport width for consistent tests
-    viewportHeight: 720, // Set default viewport height for consistent tests
-    video: true, // Enable video recording of tests (helpful for debugging)
-    screenshotOnRunFailure: true, // Automatically take screenshots on failure
-    setupNodeEvents(on, config) {
-      // Custom events and listeners can be added here, for example, to manage authentication tokens
+    baseUrl: "http://localhost:5173",
+    viewportWidth: 1280,
+    viewportHeight: 720,
+    video: true,
+    screenshotOnRunFailure: true,
+    setupNodeEvents(on, config) {},
+  },
+
+  component: {
+    devServer: {
+      framework: "react",
+      bundler: "vite",
+      viteConfig, // <-- Pass Vite config here
     },
+    supportFile: "cypress/support/component.js", // <-- Optional but better to be explicit
   },
 });

@@ -55,6 +55,7 @@ function HomePage() {
 
   return (
     <div className="bg-white">
+      
       {/* Hero Section */}
       <motion.div
         ref={heroRef}

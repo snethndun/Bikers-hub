@@ -8,10 +8,9 @@ import {
   query,
   where,
   getDocs,
-  doc,
 } from "firebase/firestore";
 import GarageCard from "./GarageCard";
-import { FaSignOutAlt } from "react-icons/fa";
+import { FaSignOutAlt, FaPlus } from "react-icons/fa";
 
 const GarageDashboard = () => {
   const [garages, setGarages] = useState([]);
@@ -70,6 +69,10 @@ const GarageDashboard = () => {
     }
   };
 
+  const goToAddGarage = () => {
+    navigate("/add-garage");
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
@@ -106,15 +109,26 @@ const GarageDashboard = () => {
             <div className="w-10 h-10 border-t-4 border-blue-500 border-solid rounded-full animate-spin"></div>
           </div>
         ) : activeSection === "garages" ? (
-          garages.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {garages.map((garage) => (
-                <GarageCard key={garage.id} garage={garage} />
-              ))}
+          <>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-800">My Garages</h2>
+              <button
+                onClick={goToAddGarage}
+                className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+              >
+                <FaPlus /> Add Garage
+              </button>
             </div>
-          ) : (
-            <p className="text-gray-600">No garages found.</p>
-          )
+            {garages.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {garages.map((garage) => (
+                  <GarageCard key={garage.id} garage={garage} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-600">No garages found.</p>
+            )}
+          </>
         ) : (
           <div>
             <h2 className="text-2xl font-bold text-gray-800 mb-6">
